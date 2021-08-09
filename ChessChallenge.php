@@ -193,6 +193,10 @@ class Board {
                     echo $this->verbose ? "One of your pieces is in the destination square\n" : "";
                     return FALSE; // one of your pieces is there.
                 }
+                // There are a couple of different ways to do this.
+                //   Assigning the name of the piece to take while I have it available now eliminates my having to look
+                //   it up later and $takePiece will still evaluate to "TRUE" later. 
+                //   I wasn't sure which one would be preferred, so I went for fewest lines of code.
                 $takePiece = $this->squares[$end[0]][$end[1]]->getPiece()->getType();
             }
 
