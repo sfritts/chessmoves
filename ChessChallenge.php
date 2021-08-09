@@ -94,6 +94,8 @@ class Square {
 /**
  * Class Board
  * @description - Main Board setup and logic including the moves
+ * 
+ * @todo - Create method to remove piece from square.
  */
 class Board {
 
@@ -194,7 +196,7 @@ class Board {
             $takePiece = FALSE;
             // is the destination square occupied and is it one of your pieces?
             if ($this->squares[$end[0]][$end[1]]->getPiece()) {
-                // what color is the piece on the desitnation square?
+                // what color is the piece on the destination square?
                 if ($this->squares[$end[0]][$end[1]]->getPiece()->getColor() === $movingPiece->getColor()) {
                     echo $this->verbose ? "One of your pieces is in the destination square\n" : "";
                     return FALSE; // one of your pieces is in destination.
@@ -202,20 +204,22 @@ class Board {
 
                 /**
                  * There are a couple of different ways to do this:
-                 *   Assigning the name of the piece to take while I have it available now eliminates my having to look
-                 *   it up later and $takePiece will still evaluate to "TRUE". 
-                 *   I wasn't sure which one would be preferred, so I went for fewest lines of code.
+                 *   Assigning the name of the piece to take while I have it 
+                 *   available eliminates my having to look it up later and 
+                 *   $takePiece will still evaluate to "TRUE". 
+                 *   I wasn't sure which one would be preferred, so I went for
+                 *   fewest lines of code.
                  */
                 $takePiece = $this->squares[$end[0]][$end[1]]->getPiece()->getType();
             }
 
-            // is this a valid desitnation?
+            // is this a valid destination?
             $validSquares = $movingPiece->validSquares($start, $end);
 
             if (!$validSquares) {
                 echo $this->verbose ? "Destination square is not allowed.\n" : "";
                 return FALSE;
-            } else { // are their pieces in the way?
+            } else { // are there pieces in the way?
 
                 /**
                  * Stop looping through entire board, pick out squares from list
@@ -268,13 +272,6 @@ abstract class Piece {
         $this->type = $type;
     }
 
-// SF - decided against this is it could be a hole, making all private properties 
-//        accessible. Might not be desired...just wanted you to know I started out this way...
-//        
-//    public function __get($property) {
-//        return $this->$property;
-//    }
-
     /**
      * 
      * @return string Piece type name.
@@ -285,7 +282,7 @@ abstract class Piece {
 
     /**
      * 
-     * @return type Piece color.
+     * @return type Piece color (light-dark).
      */
     public function getColor() {
         return $this->color;
