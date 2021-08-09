@@ -190,7 +190,6 @@ class Board {
      */
     public function makeMove($start, $end) {
         $movingPiece = $this->squares[$start[0]][$start[1]]->getPiece();
-        $output = "";
 
         if ($movingPiece) {
             $takePiece = FALSE;
