@@ -106,8 +106,8 @@ class Board {
 
     /**
      * Turns output on and off for move decisions. Good for debugging.
-     * DEFAULT: FALSE
-     * @param boolean $verbose
+     *
+     * @param boolean $verbose DEFAULT: FALSE
      */
     private $verbose;
 
@@ -117,7 +117,13 @@ class Board {
      * @param boolean $verbose Show output messages.
      */
     public function __construct($verbose = FALSE) {
+
         $switch = true;
+
+        /**
+         * The original spec said to only return TRUE or FALSE. Allow user to turn
+         *   output on and off.
+         */
         $this->verbose = $verbose;
 
         // Setting vertical
@@ -188,15 +194,18 @@ class Board {
             $takePiece = FALSE;
             // is the destination square occupied and is it one of your pieces?
             if ($this->squares[$end[0]][$end[1]]->getPiece()) {
-                // what color is it?
+                // what color is the piece on the desitnation square?
                 if ($this->squares[$end[0]][$end[1]]->getPiece()->getColor() === $movingPiece->getColor()) {
                     echo $this->verbose ? "One of your pieces is in the destination square\n" : "";
-                    return FALSE; // one of your pieces is there.
+                    return FALSE; // one of your pieces is in destination.
                 }
-                // There are a couple of different ways to do this.
-                //   Assigning the name of the piece to take while I have it available now eliminates my having to look
-                //   it up later and $takePiece will still evaluate to "TRUE" later. 
-                //   I wasn't sure which one would be preferred, so I went for fewest lines of code.
+
+                /**
+                 * There are a couple of different ways to do this:
+                 *   Assigning the name of the piece to take while I have it available now eliminates my having to look
+                 *   it up later and $takePiece will still evaluate to "TRUE". 
+                 *   I wasn't sure which one would be preferred, so I went for fewest lines of code.
+                 */
                 $takePiece = $this->squares[$end[0]][$end[1]]->getPiece()->getType();
             }
 
@@ -207,29 +216,31 @@ class Board {
                 echo $this->verbose ? "Destination square is not allowed.\n" : "";
                 return FALSE;
             } else { // are their pieces in the way?
-                // TODO get the destination square out of the valid squares list(s).
-                foreach($validSquares as $squareCoor){
+
+                /**
+                 * Stop looping through entire board, pick out squares from list
+                 *   and check for pieces.
+                 */
+                foreach ($validSquares as $squareCoor) {
                     $square = $this->getSquare(Board::$letters[$squareCoor[0]], $squareCoor[1]);
-                    if($square->getPiece()){
-                        // occupied
-                        echo $this->verbose ? "A " . $square->getPiece()->getType() . " is in the way!\n": "";
+                    if ($square->getPiece()) { // occupied
+                        echo $this->verbose ? "A " . $square->getPiece()->getType() . " is in the way!\n" : "";
                         return FALSE;
                     }
                 }
-
-                if($takePiece){
-                    echo $this->verbose ? "Take the $takePiece!\n" : "";
-                }
             }
 
-            if(!$takePiece){
+            if ($takePiece) {
+                echo $this->verbose ? "Take the $takePiece!\n" : "";
+            } else {
                 echo $this->verbose ? "Legal Move.\n" : "";
             }
+
             // remove old piece?
             // set piece?
             return TRUE;
         } else {
-            echo $this->verbose ? "No piece on staring square.\n" : "";     
+            echo $this->verbose ? "No piece on staring square.\n" : "";
             return FALSE;
         }
     }
@@ -264,10 +275,18 @@ abstract class Piece {
 //        return $this->$property;
 //    }
 
+    /**
+     * 
+     * @return string Piece type name.
+     */
     public function getType() {
         return $this->type;
     }
 
+    /**
+     * 
+     * @return type Piece color.
+     */
     public function getColor() {
         return $this->color;
     }
@@ -342,6 +361,9 @@ class Bishop extends Piece {
             $currentCol = $startColumnNum;
             $currentRow = $start[1];
 
+            /**
+             * @todo I feel like this is repetitive...
+             */
             if (($startColumnNum < $endColumnNum) && ($start[1] > $end[1])) {
                 // down and right
                 for ($i = 1; $currentCol < $endColumnNum; $i++) {
@@ -382,8 +404,8 @@ class Bishop extends Piece {
                 }
             }
 
-            array_pop($pathSquares);// take the destination square off.
-            return  $pathSquares;
+            array_pop($pathSquares); // take the destination square off.
+            return $pathSquares;
         }
 
         return FALSE;
@@ -409,7 +431,9 @@ class Rook extends Piece {
      * @param  integer  $y
      * @return boolean
      */
-    function makeMove($x, $y) { return; }
+    function makeMove($x, $y) {
+        return;
+    }
 
     function validSquares($start, $end) {
 
@@ -420,6 +444,9 @@ class Rook extends Piece {
             $endColNum = array_search($end[0], Board::$letters);
             $pathSquares = FALSE;
 
+            /**
+             * @todo I feel like this is also repetitive...
+             */
             if ($startColNum > $endColNum) {
                 // going left
                 for ($i = 1; $currentCol > $endColNum; $i++) {
@@ -456,8 +483,8 @@ class Rook extends Piece {
                     $pathSquares[] = [$currentCol, $currentRow];
                 }
             }
-            array_pop($pathSquares);// take the destination square off.
-            return  $pathSquares;
+            array_pop($pathSquares); // take the destination square off.
+            return $pathSquares;
         } else {
             return FALSE;
         }
